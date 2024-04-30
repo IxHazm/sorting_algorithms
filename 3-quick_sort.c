@@ -1,78 +1,84 @@
 #include "sort.h"
 /**
-*swap - the positions of two elements into an array
-*@array: array
-*@item1: array element
-*@item2: array element
+* swap - Swaps two integers.
+* @a: Pointer to the first integer.
+* @b: Pointer to the second integer.
 */
-void swap(int *array, ssize_t item1, ssize_t item2)
+void swap(int *a, int *b)
 {
-	int tmp;
+	int temp = *a;
 
-	tmp = array[item1];
-	array[item1] = array[item2];
-	array[item2] = tmp;
+	*a = *b;
+	*b = temp;
 }
-/**
- *lomuto_partition - lomuto partition sorting scheme implementation
- *@array: array
- *@first: first array element
- *@last: last array element
- *@size: size array
- *Return: return the position of the last element sorted
- */
-int lomuto_partition(int *array, ssize_t first, ssize_t last, size_t size)
-{
-	int pivot = array[last];
-	ssize_t current = first, finder;
 
-	for (finder = first; finder < last; finder++)
+/**
+* lomuto_partition - Lomuto partition scheme for Quick Sort.
+* @array: Array to be partitioned.
+* @low: Starting index of the partition.
+* @high: Ending index of the partition.
+* @size: Size of the array.
+* Return: Index of the pivot after partitioning.
+*/
+int lomuto_partition(int *array, int low, int high, size_t size)
+{
+	int pivot = array[high];
+
+	int i = low - 1, j;
+
+	for (j = low; j <= high - 1; j++)
 	{
-		if (array[finder] < pivot)
+		if (array[j] <= pivot)
 		{
-			if (array[current] != array[finder])
+			i++;
+			if (i != j)
 			{
-				swap(array, current, finder);
+				swap(&array[i], &array[j]);
 				print_array(array, size);
 			}
-			current++;
 		}
 	}
-	if (array[current] != array[last])
+
+	i++;
+	if (i != high)
 	{
-		swap(array, current, last);
+		swap(&array[i], &array[high]);
 		print_array(array, size);
 	}
-	return (current);
+
+	return (i);
 }
+
 /**
- *qs - qucksort algorithm implementation
- *@array: array
- *@first: first array element
- *@last: last array element
- *@size: array size
- */
-void qs(int *array, ssize_t first, ssize_t last, int size)
+* quick_sort_helper - Recursive helper function for Quick Sort.
+* @array: Array to be sorted.
+* @low: Starting index of the partition.
+* @high: Ending index of the partition.
+* @size: Size of the array.
+*/
+void quick_sort_helper(int *array, int low, int high, size_t size)
 {
-	ssize_t position = 0;
-
-
-	if (first < last)
+	if (low < high)
 	{
-		position = lomuto_partition(array, first, last, size);
+		int pi = lomuto_partition(array, low, high, size);
 
-		qs(array, first, position - 1, size);
-		qs(array, position + 1, last, size);
+		quick_sort_helper(array, low, pi - 1, size);
+		quick_sort_helper(array, pi + 1, high, size);
 	}
 }
+
 /**
- *quick_sort - prepare the terrain to quicksort algorithm
- *@array: array
- *@size: array size
- */
+* quick_sort - Sorts an array of integers in ascending order using Quick Sort.
+* @array: Array to be sorted.
+* @size: Size of the array.
+*/
 void quick_sort(int *array, size_t size)
 {
-	if (!array || size < 2)
+	if (array == NULL || size < 2)
+	{
 		return;
-	qs(array, 0, size - 1, size);
+	}
+
+
+	quick_sort_helper(array, 0, size - 1, size);
 }

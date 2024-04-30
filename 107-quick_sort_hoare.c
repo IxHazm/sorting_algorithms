@@ -1,72 +1,82 @@
 #include "sort.h"
+
 /**
-*swap - the positions of two elements into an array
-*@array: array
-*@item1: array element
-*@item2: array element
+* swap - Swaps two integers.
+* @a: Pointer to the first integer.
+* @b: Pointer to the second integer.
 */
-void swap(int *array, ssize_t item1, ssize_t item2)
+void swap(int *a, int *b)
 {
-	int tmp;
+	int temp = *a;
 
-	tmp = array[item1];
-	array[item1] = array[item2];
-	array[item2] = tmp;
+	*a = *b;
+	*b = temp;
 }
+
+
 /**
- *hoare_partition - hoare partition sorting scheme implementation
- *@array: array
- *@first: first array element
- *@last: last array element
- *@size: size array
- *Return: return the position of the last element sorted
- */
-int hoare_partition(int *array, int first, int last, int size)
+ * Hoare_partition_scheme - a function to implement the hoare partition
+ * @array: the array to work on
+ * @size: the size of the array
+ * @start: the beginning of the array
+ * @end: the end of the array
+ * Return: the partiioned
+*/
+int Hoare_partition_scheme(int *array, size_t size, int end, int start)
 {
-	int current = first - 1, finder = last + 1;
-	int pivot = array[last];
+	int pivot, i, j;
 
-	while (1)
+	pivot = array[start];
+	for (i = end - 1, j = start + 1; i < j;)
 	{
+		do {
+			i++;
+		} while (array[i] < pivot);
+		do {
+			j--;
+		} while (array[j] > pivot);
 
-		do {
-			current++;
-		} while (array[current] < pivot);
-		do {
-			finder--;
-		} while (array[finder] > pivot);
-		if (current >= finder)
-			return (current);
-		swap(array, current, finder);
-		print_array(array, size);
+		if (i < j)
+		{
+			swap(&array[i], &array[j]);
+			print_array(array, size);
+		}
+	}
+
+	return (i);
+}
+
+/**
+ * quickSort - a function to implement the quickSort
+ * @array: the array to work on
+ * @size: the size of the array
+ * @start: the beginning of the array
+ * @end: the end of the array
+*/
+void quickSort(int *array, size_t size, int end, int start)
+{
+	int pi;
+
+	if (start - end > 0)
+	{
+		pi = Hoare_partition_scheme(array, size, end, start);
+		quickSort(array, size, end, pi - 1);
+		quickSort(array, size, pi, start);
 	}
 }
-/**
- *qs - qucksort algorithm implementation
- *@array: array
- *@first: first array element
- *@last: last array element
- *@size: array size
- */
-void qs(int *array, ssize_t first, ssize_t last, int size)
-{
-	ssize_t position = 0;
 
-	if (first < last)
-	{
-		position = hoare_partition(array, first, last, size);
-		qs(array, first, position - 1, size);
-		qs(array, position, last, size);
-	}
-}
 /**
- *quick_sort_hoare - prepare the terrain to quicksort algorithm
- *@array: array
- *@size: array size
- */
+ * quick_sort_hoare - a function that sorts an array of integers
+ * in ascending order using the quick_sort_hoare algorithm
+ *
+ * @array: the array to sort using bubble sort
+ * @size: the size of the array
+ * Return: void
+*/
 void quick_sort_hoare(int *array, size_t size)
 {
-	if (!array || size < 2)
+	if (array == NULL || size < 2)
 		return;
-	qs(array, 0, size - 1, size);
+
+	quickSort(array, size, 0, size - 1);
 }
